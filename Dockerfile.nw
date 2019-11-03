@@ -8,9 +8,7 @@ LABEL se.bosk.daniel.shadow.url="https://github.com/dbosk/shadow.docker"
 @
 
 The image is based on the official documentation of the Shadow 
-project\footnote{%
-  URL: \url{https://github.com/shadow/shadow/wiki/1.2-Shadow-with-Docker}.
-}.
+project.
 The [[<<Dockerfile>>]] will have the following structure:
 <<Dockerfile>>=
 <<base image to use>>

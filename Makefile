@@ -1,5 +1,8 @@
 .PHONY: all docker
-#all: docker
+all: Dockerfile.pdf docker
+
+NOWEAVEFLAGS=-latex
+
 
 DOCKER_ID_USER?=dbosk
 
@@ -22,8 +25,7 @@ distclean:
 
 .PHONY: clean
 clean:
-	${RM} shadow.pdf
-	${RM} Dockerfile.tex
+	${RM} Dockerfile.pdf Dockerfile.tex
 
 
 INCLUDE_MAKEFILES=.
