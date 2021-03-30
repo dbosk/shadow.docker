@@ -10,6 +10,7 @@ docker run -it --tmpfs /dev/shm:rw,nosuid,nodev,exec,size=1g dbosk/shadow
 Probably you must adjust the `size` parameter.
 
 There are probably other parameters that you must also adjust. See [the 
-documentation][shadow-doc].
+documentation][shadow-doc]. But remember that the `sysctl` commands affect the 
+kernel, so those settings are changed outside the Docker image.
 
 [shadow-doc]: https://github.com/shadow/shadow/blob/main/docs/1.1-Shadow.md#system-configs-and-limits
