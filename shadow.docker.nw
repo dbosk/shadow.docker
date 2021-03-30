@@ -81,7 +81,7 @@ shadow.docker: Dockerfile
 	docker build -t shadow .
 	docker tag shadow ${DOCKER_ID_USER}/shadow
 
-PHONY: distclean-docker
+.PHONY: distclean-docker
 distclean: distclean-docker
 distclean-docker:
 	docker image rm shadow
