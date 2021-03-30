@@ -1,2 +1,8 @@
-Dockerfile.pdf
 ltxobj/
+shadow.docker.aux
+shadow.docker.fdb_latexmk
+shadow.docker.fls
+shadow.docker.log
+shadow.docker.mk
+shadow.docker.pdf
+shadow.docker.tex

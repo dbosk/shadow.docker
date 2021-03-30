@@ -1,0 +1,171 @@
+This is the documentation for a Docker image for the Shadow discrete-event 
+network simulator.
+
+This is the documentation for the image of the following version:
+<<image info>>=
+MAINTAINER Daniel Bosk <dbosk@kth.se>
+LABEL se.bosk.daniel.shadow.version="$Id: 195d019752d8903254c72d4fa5dad084b78377db $"
+LABEL se.bosk.daniel.shadow.url="https://github.com/dbosk/shadow.docker"
+@
+
+The image is available from Docker Hub.
+
+
+\section{Building}
+
+The build instructions are as follows.
+<<shadow.docker.mk>>=
+.PHONY: all
+all: shadow.docker.pdf shadow.docker
+
+<<build documentation>>
+<<build docker image>>
+
+.PHONY: clean distclean
+
+INCLUDE_MAKEFILES=./makefiles
+include ${INCLUDE_MAKEFILES}/noweb.mk
+include ${INCLUDE_MAKEFILES}/tex.mk
+@
+
+Just run \verb'make all' and it will produce the Docker image.
+The details are covered below.
+
+
+\section{Running the image}
+
+Once you have the image, either from building or from Docker Hub, then
+\begin{center}
+\verb'docker run -it --tmpfs /dev/shm:rw,nosuid,nodev,exec,size=1g shadow'
+\end{center}
+will run the image.
+The \verb'--tmpfs' argument is important.
+Probably you must increase the \verb'size' parameter.
+
+There are more things that you might need to change.
+See
+\begin{center}
+\verb'https://github.com/shadow/shadow/blob/main/docs/1.1-Shadow.md#system-configs-and-limits'.
+\end{center}
+
+
+\section{The Docker image}
+
+The image is based on the official documentation of the Shadow project.
+The [[<<Dockerfile>>]] will have the following structure:
+<<Dockerfile>>=
+<<base image to use>>
+<<image info>>
+<<install packages>>
+<<install shadow>>
+<<install shadow tools>>
+@
+
+We build it from this documentation as follows.
+<<build docker image>>=
+Dockerfile: shadow.docker.nw
+	${NOTANGLE}
+
+.PHONY: clean-Dockerfile
+clean: clean-Dockerfile
+clean-Dockerfile:
+	${RM} Dockerfile
+@
+
+Then we can build the image as follows.
+<<build docker image>>=
+DOCKER_ID_USER?=dbosk
+
+.PHONY: shadow.docker
+shadow.docker: Dockerfile
+	docker build -t shadow .
+	docker tag shadow ${DOCKER_ID_USER}/shadow
+
+PHONY: distclean-docker
+distclean: distclean-docker
+distclean-docker:
+	docker image rm shadow
+	docker image rm ${DOCKER_ID_USER}/shadow
+@
+
+And we can push it to Docker Hub.
+<<build docker image>>=
+.PHONY: push
+push: shadow.docker
+	docker push ${DOCKER_ID_USER}/shadow
+@
+
+\subsection{The base image}
+
+Now we cover the contents of [[<<Dockerfile>>]].
+We will base the environment on Ubuntu 18.04, since that is what the Shadow 
+developers use.
+<<base image to use>>=
+FROM ubuntu:18.04
+@
+
+We will install the required packages.
+<<install packages>>=
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y \
+  cmake \
+  gcc \
+  g++ \
+  libc-dbg \
+  libglib2.0-dev \
+  libigraph-dev \
+  make \
+  python3 \
+  python3-pyelftools \
+  xz-utils \
+  python3-numpy \
+  python3-lxml \
+  python3-matplotlib \
+  python3-networkx \
+  python3-scipy \
+  dstat \
+  git \
+  htop \
+  tmux screen \
+  automake autoconf zlib1g-dev liblzma5 liblzma-dev
+@
+
+\subsection{The Shadow program}
+
+We will clone the Shadow simulator source code and build and install it.
+<<install shadow>>=
+RUN git clone https://github.com/shadow/shadow.git shadow-src && \
+  cd shadow-src && \
+  ./setup build && ./setup install && \
+  echo "export PATH=${PATH}:~/.shadow/bin" >> ~/.bashrc
+@
+
+\subsection{Additional tools}
+
+Now we can install the additional tools.
+We install the traffic generator \verb'tgen'.
+<<install shadow tools>>=
+RUN git clone https://github.com/shadow/tgen.git tgen-src && \
+  cd tgen-src && mkdir build && cd build && \
+  cmake .. -DCMAKE_INSTALL_PREFIX=~/.shadow && \
+  make && make install
+@
+
+We don't install the Tor plugin.
+Because if we want to run a custom Tor, that must be set during setup.
+
+
+\section{This documentation}
+
+We can compile this documentation as follows.
+<<build documentation>>=
+shadow.docker.pdf: shadow.docker.nw
+	${NOWEAVE.pdf}
+
+.PHONY: clean-doc
+clean: clean-doc
+clean-doc:
+	${RM} shadow.docker.pdf shadow.docker.tex
+	${RM} shadow.docker.aux shadow.docker.fdb_latexmk shadow.docker.fls shadow.docker.log
+@
+
