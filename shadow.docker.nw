@@ -48,6 +48,9 @@ See
 \verb'https://github.com/shadow/shadow/blob/main/docs/1.1-Shadow.md#system-configs-and-limits'.
 \end{center}
 
+The Git repos for Shadow and the tools installed can be found in the working 
+directory (\verb'/shadow') inside the image.
+
 
 \section{The Docker image}
 
@@ -134,10 +137,12 @@ RUN apt-get update && apt-get install -y \
 
 We will clone the Shadow simulator source code and build and install it.
 <<install shadow>>=
+WORKDIR /shadow
 RUN git clone https://github.com/shadow/shadow.git shadow-src && \
   cd shadow-src && \
   ./setup build && ./setup install && \
-  echo "export PATH=${PATH}:~/.shadow/bin" >> ~/.bashrc
+  echo "export PATH=${PATH}:~/.shadow/bin" >> ~/.bashrc && \
+  echo "export PATH=${PATH}:/shadow/shadow-src/src/tools" >> ~/.bashrc
 @
 
 \subsection{Additional tools}
