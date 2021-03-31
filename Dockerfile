@@ -25,12 +25,20 @@ RUN apt-get update && apt-get install -y \
   tmux screen \
   automake autoconf zlib1g-dev liblzma5 liblzma-dev
 WORKDIR /shadow
-RUN git clone https://github.com/shadow/shadow.git shadow-src && \
-  cd shadow-src && \
+RUN git clone https://github.com/shadow/shadow.git && \
+  cd shadow && \
   ./setup build && ./setup install && \
   echo "export PATH=${PATH}:~/.shadow/bin" >> ~/.bashrc && \
   echo "export PATH=${PATH}:/shadow/shadow-src/src/tools" >> ~/.bashrc
-RUN git clone https://github.com/shadow/tgen.git tgen-src && \
-  cd tgen-src && mkdir build && cd build && \
+RUN git clone https://github.com/shadow/tgen.git && \
+  cd tgen && mkdir build && cd build && \
   cmake .. -DCMAKE_INSTALL_PREFIX=~/.shadow && \
+  make && make install
+RUN git clone https://github.com/shadow/shadow-plugin-extras.git && \
+  cd shadow-plugin-extras && \
+  mkdir build && cd build && \
+  cmake .. \
+    -DCMAKE_INSTALL_PREFIX=`readlink -f ~`/.shadow \
+    -DCMAKE_BUILD_TYPE="Release" \
+    && \
   make && make install
