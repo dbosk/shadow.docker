@@ -17,3 +17,8 @@ documentation][docker-doc].
 
 [shadow-doc]: https://github.com/shadow/shadow/blob/main/docs/1.1-Shadow.md#system-configs-and-limits
 [docker-doc]: https://docs.docker.com/engine/reference/commandline/run/#configure-namespaced-kernel-parameters-sysctls-at-runtime
+
+Once the container is running, you can access the examples of [the getting 
+started tutorial][getting-started] in `/shadow/shadow-src/resource/examples`. 
+
+[getting-started]: https://github.com/shadow/shadow/blob/main/docs/2-Getting-Started-Tutorial.md
