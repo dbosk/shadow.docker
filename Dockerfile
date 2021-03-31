@@ -23,7 +23,8 @@ RUN apt-get update && apt-get install -y \
   git \
   htop \
   tmux screen \
-  automake autoconf zlib1g-dev liblzma5 liblzma-dev
+  automake autoconf zlib1g-dev liblzma5 liblzma-dev \
+  python3-venv python3-pip
 WORKDIR /shadow
 RUN git clone https://github.com/shadow/shadow.git && \
   cd shadow && \
@@ -42,3 +43,7 @@ RUN git clone https://github.com/shadow/shadow-plugin-extras.git && \
     -DCMAKE_BUILD_TYPE="Release" \
     && \
   make && make install
+RUN git clone https://github.com/shadow/tornettools.git && \
+  cd tornettools && \
+  pip3 install -r requirements.txt && \
+  pip3 install -I .
