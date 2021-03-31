@@ -29,8 +29,8 @@ WORKDIR /shadow
 RUN git clone https://github.com/shadow/shadow.git && \
   cd shadow && \
   ./setup build && ./setup install && \
-  echo "export PATH=${PATH}:~/.shadow/bin" >> ~/.bashrc && \
-  echo "export PATH=${PATH}:/shadow/shadow-src/src/tools" >> ~/.bashrc
+  echo "export PATH=${PATH}:~/.shadow/bin:/shadow/shadow/src/tools" >> \
+    ~/.bashrc
 RUN git clone https://github.com/shadow/tgen.git && \
   cd tgen && mkdir build && cd build && \
   cmake .. -DCMAKE_INSTALL_PREFIX=~/.shadow && \
@@ -39,7 +39,7 @@ RUN git clone https://github.com/shadow/shadow-plugin-extras.git && \
   cd shadow-plugin-extras && \
   mkdir build && cd build && \
   cmake .. \
-    -DCMAKE_INSTALL_PREFIX=`readlink -f ~`/.shadow \
+    -DCMAKE_INSTALL_PREFIX=~/.shadow \
     -DCMAKE_BUILD_TYPE="Release" \
     && \
   make && make install
